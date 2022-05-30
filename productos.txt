@@ -1,0 +1,3 @@
+{"title":"Pizza","price":32,"thumbnail":"Tutancamon.com","idProduct":1},
+{"title":"Raviolitos","price":100,"thumbnail":"Tutancamon.com","idProduct":3},
+{"title":"Chorizo","price":25,"thumbnail":"Tutancamon.com","idProduct":2},
