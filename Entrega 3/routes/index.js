@@ -101,9 +101,19 @@ class Contenedor {
 
 const contenedorProductos = new Contenedor("productos.txt")
 
+async function cargarProductos() {
+    await contenedorProductos.save({ title: "cartuchera", price: 100, thumbnail: "https://d3ugyf2ht6aenh.cloudfront.net/stores/891/147/products/15222071-151595990d47d4f35b16467701309837-1024-1024.jpg", id: Contenedor.idContador })
+    await contenedorProductos.save({ title: "lapiz", price: 300, thumbnail: "https://papeleria24h.files.wordpress.com/2019/03/punta-lapiz-staedtler-tradition-110.jpg?w=982", id: Contenedor.idContador })
+    await contenedorProductos.save({ title: "carpeta", price: 500, thumbnail: "https://www.rioshopdeco.com.ar/6534-large_default/carpeta-pp-tonalizada-escolar-3x40-azul-art-5401.jpg", id: Contenedor.idContador })
+}
+
+cargarProductos()
+
+
+//RUTAS
 
 router.get(`/productos`, (req , res)=>{
-    res.json(contenedorProductos.getAll)
+    res.send(contenedorProductos.getAll)
 })
 
 router.get(`/productos/:id`, (req , res)=>{
@@ -114,16 +124,22 @@ router.get(`/productos/:id`, (req , res)=>{
 
 router.post(`/productos`, (req , res )=>{
     const { title , price , thumbnail } = req.body
-    
+    res.json(contenedorProductos.save({ title , price , thumbnail }))
+    console.log(`Producto con el ID:${id} agregado`)
 })
 
 router.put(`/productos/:id` ,(req , res)=>{
-      
+    const id = req.params.id
+    const productoEncontrado = contenedorProductos.getById(id)
+
+
 })
 
 
 router.delete(`/productos/:id` ,(req , res)=>{
-    
+    const id = req.params.id
+    res.send(contenedorProductos.deleteById(id))
+    console.log(`Producto con el ID:${id} eliminado`)
 })
 
 
