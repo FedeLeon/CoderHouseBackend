@@ -76,11 +76,16 @@ class Contenedor {
 
     // modifica un producto
 
-    async putProduct(id) {
+    async putProduct(id, nuevoProducto) {
         try {
             let contenido = this.producto
-            let objetoEncontrado = contenido.find(i => i.id === id)
-            return objetoEncontrado
+            contenido.forEach(element => {
+             if(element.id === id) {
+                element = nuevoProducto
+             }
+            })
+            console.log(contenido)
+            return contenido
             
         } catch (err) {
             console.log(`No se encontro el objeto con ese ID : ${err}`)
@@ -91,9 +96,10 @@ class Contenedor {
 
     async deleteById(id) {
         try {
-            let nuevoArray = this.product.filter(i => i.id != id)
-            productos = nuevoArray
-            return productos
+            let contenido = this.producto
+            let contenidoFiltrado = contenido.filter(i => i.id != id)
+            this.producto = contenidoFiltrado
+            return this.producto
         } catch (err) {
             console.log(`Hubo un error en recuperar el objeto por ID : ${err}`)
         }
@@ -120,13 +126,13 @@ router.post(`/productos`, (req , res )=>{
 router.put(`/productos/:id` ,(req , res)=>{
     const { title, price, thumbnail } = req.body
     const id = Number(req.params.id)
-    contenedorProductos.putProduct(id)
+    contenedorProductos.putProduct(id, { title, price, thumbnail }).then(i => res.json(i))
    
 })
 
 router.delete(`/productos/:id` ,(req , res)=>{
     const id = Number(req.params.id)
-    contenedorProductos.deleteById(id).then(i => res.send({msg:`El id del producto eliminado es ${i.id}`}))
+    contenedorProductos.deleteById(id).then(i => res.json(i))
 })
 
 
