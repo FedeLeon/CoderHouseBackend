@@ -6,7 +6,7 @@ const rutas = require('./routes/index')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.get(`/app`, (req , res ) => {
+app.get(`/api`, (req , res ) => {
     res.sendFile(__dirname + `/public/index.html`)
 })
 

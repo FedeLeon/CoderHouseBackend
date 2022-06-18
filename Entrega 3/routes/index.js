@@ -1,49 +1,52 @@
 const { Router } = require(`express`)
 const router = Router()
-const fs = require(`fs`);
+let productos = [
+    {
+      "title": "Escuadra",
+      "price": 123.45,
+      "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",
+      "id": 1
+    },
+    {
+      "title": "Calculadora",
+      "price": 234.56,
+      "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/calculator-math-tool-school-256.png",
+      "id": 2
+    },
+    {
+      "title": "Globo Terráqueo",
+      "price": 345.67,
+      "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
+      "id": 3
+    }
+]
 
 //CONTENEDOR
 
 class Contenedor {
-    constructor(nombreArchivo) {
-        this.nombreArchivo = nombreArchivo
-        fs.promises.writeFile(`./${nombreArchivo}`, ``)
+    constructor(producto) {
+        this.producto = producto
     }
-
+        
     static idContador = 1
 
+    // devolver un array de objetos con todos los objetos que esten el archivo 
 
-    //guardar el objeto en el archivo y devolver el id asignado 
-
-    async save(obj) {
+    async getAll() {
         try {
-            let inventary = await fs.promises.readFile(`${this.nombreArchivo}`, 'utf-8')
-            console.log(inventary)
-            if (!inventary) {
-                console.log(`Se agrego el objeto, ID asignado: ${Contenedor.idContador}`)
-                Contenedor.idContador++
-                const arrObjs = [obj]
-                await fs.promises.writeFile(`${this.nombreArchivo}`, JSON.stringify(arrObjs))
-                return Contenedor.idContador
-            } else {
-                console.log(`Se agrego el objeto, ID asignado: ${Contenedor.idContador}`)
-                Contenedor.idContador++
-                inventary = JSON.parse(inventary);
-                inventary.push(obj)
-                await fs.promises.writeFile(`${this.nombreArchivo}`, JSON.stringify(inventary))
-                return Contenedor.idContador
-            }
+           let contenido = this.producto
+           return await contenido
         } catch (err) {
-            console.log(`No se pudeo agregar el objeto: ${err}`)
+            console.log(`Error: ${err}`)
         }
     }
+
     // recibe un id y devuelve el objeto con ese id si no existe devolver null
 
     async getById(id) {
         try {
-            let contenido = await fs.promises.readFile(`./${this.nombreArchivo}`, 'utf-8')
-            let contenidoParseado = JSON.parse(contenido)
-            let objetoEncontrado = contenidoParseado.find(item => item.id == id)
+            let contenido = this.producto
+            let objetoEncontrado = contenido.find(i => i.id === id)
             if (objetoEncontrado) {
                 console.log(`El ID pertenece al objeto: ${objetoEncontrado.title}`)
                 return objetoEncontrado
@@ -57,16 +60,30 @@ class Contenedor {
         }
     }
 
-    // devolver un array de objetos con todos los objetos que esten el archivo 
+    //guardar el objeto en el archivo y devolver el id asignado 
 
-    async getAll() {
+    async postProduct(obj) {
         try {
-            let contenido = await fs.promises.readFile(`${this.nombreArchivo}`, "utf-8")
-            let contenidoParseado = JSON.parse(contenido)
-            console.log(contenidoParseado)
-            return contenidoParseado
+            let id = this.producto.length
+            let nuevoProducto = {...obj , id : id }
+            this.producto.push(nuevoProducto)
+            console.log(`Objeto con id : ${nuevoProducto.id} agregado`)
+            return nuevoProducto
         } catch (err) {
-            console.log(`Hubo un error : ${err}`)
+            console.log(`No se pudeo agregar el objeto: ${err}`)
+        }
+    }
+
+    // modifica un producto
+
+    async putProduct(id) {
+        try {
+            let contenido = this.producto
+            let objetoEncontrado = contenido.find(i => i.id === id)
+            return objetoEncontrado
+            
+        } catch (err) {
+            console.log(`No se encontro el objeto con ese ID : ${err}`)
         }
     }
 
@@ -74,72 +91,42 @@ class Contenedor {
 
     async deleteById(id) {
         try {
-            let contenido = await fs.promises.readFile(`${this.fileName}`, "utf-8")
-            let contenidoParseado = JSON.parse(contenido)
-            let nuevoArray = contenidoParseado.filter((item) => item.id != id)
-            fs.promises.writeFile(`${this.nombreArchivo}`, JSON.stringify(nuevoArray))
-            console.log(`Objeto con id : ${id} borrado`)
+            let nuevoArray = this.product.filter(i => i.id != id)
+            productos = nuevoArray
+            return productos
         } catch (err) {
-            console.log(`Hubo un error en recuperar el objeto por id : ${err}`)
+            console.log(`Hubo un error en recuperar el objeto por ID : ${err}`)
         }
     }
-
-    // elimina todos 
-
-    async deleteAll() {
-        try {
-            await fs.promises.writeFile(`./${this.fileName}`, ``)
-            console.log("Se han borrado todos los items")
-            Contenedor.idContador = 1
-        } catch (err) {
-            console.log(`Hubo un error: ${error}`);
-        }
-    }
-
-
 }
 
-const contenedorProductos = new Contenedor("productos.txt")
-
-async function cargarProductos() {
-    await contenedorProductos.save({ title: "cartuchera", price: 100, thumbnail: "https://d3ugyf2ht6aenh.cloudfront.net/stores/891/147/products/15222071-151595990d47d4f35b16467701309837-1024-1024.jpg", id: Contenedor.idContador })
-    await contenedorProductos.save({ title: "lapiz", price: 300, thumbnail: "https://papeleria24h.files.wordpress.com/2019/03/punta-lapiz-staedtler-tradition-110.jpg?w=982", id: Contenedor.idContador })
-    await contenedorProductos.save({ title: "carpeta", price: 500, thumbnail: "https://www.rioshopdeco.com.ar/6534-large_default/carpeta-pp-tonalizada-escolar-3x40-azul-art-5401.jpg", id: Contenedor.idContador })
-}
-
-cargarProductos()
-
+const contenedorProductos = new Contenedor(productos)
 
 //RUTAS
 
 router.get(`/productos`, (req , res)=>{
-    res.send(contenedorProductos.getAll)
-})
+    contenedorProductos.getAll().then(r =>res.json(r))})
 
 router.get(`/productos/:id`, (req , res)=>{
-    const id = req.params.id
-    res.json(contenedorProductos.getById(id))
+    const id = Number(req.params.id)
+    contenedorProductos.getById(id).then(i => res.status(200).json(i))
 })
 
-
 router.post(`/productos`, (req , res )=>{
-    const { title , price , thumbnail } = req.body
-    res.json(contenedorProductos.save({ title , price , thumbnail }))
-    console.log(`Producto con el ID:${id} agregado`)
+    const { title, price, thumbnail } = req.body
+    contenedorProductos.postProduct({ title, price, thumbnail }).then(i => res.send({msg:`El id del producto agregado es: ${i.id}`}))
 })
 
 router.put(`/productos/:id` ,(req , res)=>{
-    const id = req.params.id
-    const productoEncontrado = contenedorProductos.getById(id)
-
-
+    const { title, price, thumbnail } = req.body
+    const id = Number(req.params.id)
+    contenedorProductos.putProduct(id)
+   
 })
 
-
 router.delete(`/productos/:id` ,(req , res)=>{
-    const id = req.params.id
-    res.send(contenedorProductos.deleteById(id))
-    console.log(`Producto con el ID:${id} eliminado`)
+    const id = Number(req.params.id)
+    contenedorProductos.deleteById(id).then(i => res.send({msg:`El id del producto eliminado es ${i.id}`}))
 })
 
 
