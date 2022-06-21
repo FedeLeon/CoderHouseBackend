@@ -77,16 +77,16 @@ class Contenedor {
 
     // modifica un producto
 
-    async putProduct(id, nuevoProducto) {
+    async putProduct(obj) {
         try {
             let contenido = this.producto
             contenido.forEach(element => {
-             if(element.id === id) {
-                element = nuevoProducto
+             if(element.id === obj.id) {
+                element = obj
              }
             })
-            console.log(contenido)
-            return contenido
+            console.log(this.producto)
+            return this.producto
             
         } catch (err) {
             console.log(`No se encontro el objeto con ese ID : ${err}`)
@@ -126,10 +126,8 @@ router.post(`/productos`, (req , res )=>{
 })
 
 router.put(`/productos/:id` ,(req , res)=>{
-    const { title, price, thumbnail } = req.body
-    const id = Number(req.params.id)
-    contenedorProductos.putProduct(id, { title, price, thumbnail }).then(i => res.json(i))
-   
+    const { title, price, thumbnail, id } = req.body
+    contenedorProductos.putProduct({ title, price, thumbnail, id }).then(i => res.json(i))
 })
 
 router.delete(`/productos/:id` ,(req , res)=>{
