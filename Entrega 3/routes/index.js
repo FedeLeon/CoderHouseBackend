@@ -35,7 +35,7 @@ class Contenedor {
     async getAll() {
         try {
            let contenido = this.producto
-           return await contenido
+           return contenido
         } catch (err) {
             console.log(`Error: ${err}`)
         }
@@ -47,12 +47,13 @@ class Contenedor {
         try {
             let contenido = this.producto
             let objetoEncontrado = contenido.find(i => i.id === id)
-            if (objetoEncontrado) {
-                console.log(`El ID pertenece al objeto: ${objetoEncontrado.title}`)
-                return objetoEncontrado
-            } else {
+            if (!objetoEncontrado) {
                 console.log(`El ID no pertenece a ningun objeto`)
                 return null
+                
+            } else {
+                console.log(`El ID pertenece al objeto: ${objetoEncontrado.title}`)
+                return objetoEncontrado
             }
 
         } catch (err) {
@@ -76,16 +77,16 @@ class Contenedor {
 
     // modifica un producto
 
-    async putProduct(id, nuevoProducto) {
+    async putProduct(obj) {
         try {
             let contenido = this.producto
             contenido.forEach(element => {
-             if(element.id === id) {
-                element = nuevoProducto
+             if(element.id === obj.id) {
+                element = obj
              }
             })
-            console.log(contenido)
-            return contenido
+            console.log(this.producto)
+            return this.producto
             
         } catch (err) {
             console.log(`No se encontro el objeto con ese ID : ${err}`)
@@ -110,24 +111,23 @@ const contenedorProductos = new Contenedor(productos)
 
 //RUTAS
 
-router.get(`/productos`, (req , res)=>{
-    contenedorProductos.getAll().then(r =>res.json(r))})
+router.get('/productos', (req, res) => {
+    res.render('productos', { productos, hasAny: true })
+})
 
 router.get(`/productos/:id`, (req , res)=>{
     const id = Number(req.params.id)
-    contenedorProductos.getById(id).then(i => res.status(200).json(i))
+    contenedorProductos.getById(id).then(i => res.render('productoId', productos[id-1]))
 })
 
 router.post(`/productos`, (req , res )=>{
     const { title, price, thumbnail } = req.body
-    contenedorProductos.postProduct({ title, price, thumbnail }).then(i => res.send({msg:`El id del producto agregado es: ${i.id}`}))
+    contenedorProductos.postProduct({ title, price, thumbnail }).then(i => res.render('productoAdd', productos[i.id]))
 })
 
 router.put(`/productos/:id` ,(req , res)=>{
-    const { title, price, thumbnail } = req.body
-    const id = Number(req.params.id)
-    contenedorProductos.putProduct(id, { title, price, thumbnail }).then(i => res.json(i))
-   
+    const { title, price, thumbnail, id } = req.body
+    contenedorProductos.putProduct({ title, price, thumbnail, id }).then(i => res.json(i))
 })
 
 router.delete(`/productos/:id` ,(req , res)=>{
