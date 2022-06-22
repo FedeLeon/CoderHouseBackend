@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+        head
+                meta(charset="UTF-8")
+                meta(http-equiv="X-UA-Compatible", content="IE=edge")
+                meta(name="viewport", content="width=device-width, initial-scale=1.0")
+                title Productos
+        body
+                nav
+                        form(action="/api/" method="get")
+                                button(type="submit") Inicio
+                        form(action="/api/productos" method="get")
+                                button(type="submit") Ver Productos
+
+                each producto in productos
+                        h1 #{producto.title}
+                        p Precio: #{producto.price}
+                        img(src=producto.thumbnail, alt="")
+
+                        
