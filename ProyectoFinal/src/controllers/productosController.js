@@ -1,4 +1,4 @@
-const { Contenedor } = require('../clases/contenedorProductos')
+const { Contenedor } = require('../clases/contenedor')
 const { Producto } = require('../clases/producto')
 
 
@@ -21,7 +21,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const productoEncontrado = await contenedorProductos.getById(id);
+        const productoEncontrado = await contenedorProductos.getById(id)
 
         if (productoEncontrado) {
             res.status(200).json(productoEncontrado);
