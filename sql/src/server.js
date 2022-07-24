@@ -2,16 +2,16 @@ const express = require(`express`)
 const app = express()
 const { Server: IOServer } = require('socket.io')
 const puerto = 8080
-const database = require("./database")
-const database2 = require("./database2")
+const database = require("./databasemysql")
+const database2 = require("./databasesqlite")
 
 
 //CLASES
 const ContenedorProductos = require('./Class/productosClass')
-const contenedorProductos = new ContenedorProductos(database.databaseConnection, 'product')
+const contenedorProductos = new ContenedorProductos(database.databaseConnectionMysql, 'product')
 
 const ContenedorChat = require('./Class/chatClass')
-const contenedorChat = new ContenedorChat(database2.databaseConnection, 'messages')
+const contenedorChat = new ContenedorChat(database2.databaseConnectionSqlite, 'messages')
 
 //RUTA ESTATICA
 app.use(express.static(__dirname + `/../public`))

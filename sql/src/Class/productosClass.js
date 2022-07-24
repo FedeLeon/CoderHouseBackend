@@ -1,4 +1,4 @@
-const productsDB = require('../database')
+const productsDB = require('../databasemysql')
 
 const productTable = async () => {
     try {

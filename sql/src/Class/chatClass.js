@@ -1,4 +1,4 @@
-const chatDB = require('../database2')
+const chatDB = require('../databasesqlite')
 
 const chatTable = async () => {
     try {
